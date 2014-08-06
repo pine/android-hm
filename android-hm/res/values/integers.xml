@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="network_timeout">3500</integer>
+    <integer name="network_max_retries">1</integer>
+</resources>

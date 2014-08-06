@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+    
+    <string name="app_name">ほっともっと</string>
+    <string name="hello_world">Hello world!</string>
+    
+    
+    <!-- BasicActivity -->
+    <string name="ok_button">OK</string>
+	<string name="loading_title">読み込み中</string>
+	<string name="network_failed_title">通信失敗</string>
+	<string name="network_error_title">通信エラー</string>
+	
+	<!-- MainActivity -->
+    <string name="setting_menu">設定</string>
+    <string name="loading_msg_menus">メニューの一覧を読み込んでいます&#8230;</string>
+    <string name="network_failed_msg_menus">メニュー一覧の取得に失敗しました。</string>
+    <string name="network_error_msg_menus">メニュー一覧を取得する際にエラーが発生しました。</string>
+    
+	<!-- SettingsActivity -->
+	<string name="setting_title">都道府県の設定</string>
+	<string name="setting_ok_button">決定</string>
+	<string name="setting_cancel_button">キャンセル</string>
+	<string name="setting_save_toast">都道府県を保存しました</string>
+	<string name="setting_cancel_toast">設定をキャンセルしました</string>
+	<string name="network_failed_msg_prefectures">都道府県の一覧の取得に失敗しました。</string>
+	<string name="network_error_msg_prefectures">都道府県の一覧を取得する際にエラーが発生しました。</string>
+	<string name="loading_msg_prefectures">都道府県の一覧を読み込んでいます&#8230;</string>
+	
+</resources>
