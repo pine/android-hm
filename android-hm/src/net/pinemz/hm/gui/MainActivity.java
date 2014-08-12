@@ -49,6 +49,7 @@ public class MainActivity
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         
         this.cache = new BitmapCache();
+        /*
         this.menuAdapter = new MenuTabHelper(
         		this.getApplicationContext(),
 //        		(ViewGroup)this.findViewById(R.id.linearLayoutMenuLists),
@@ -56,8 +57,8 @@ public class MainActivity
         		R.layout.item_menu_list,
         		this.cache
         		);
-        
-        this.textViewTabName = (TextView)this.findViewById(R.id.textViewTabName);
+        */
+//        this.textViewTabName = (TextView)this.findViewById(R.id.textViewTabName);
         
         // API ŠÖŒW
     	this.requestQueue = Volley.newRequestQueue(this.getApplicationContext());
@@ -145,13 +146,14 @@ public class MainActivity
     public void onTabSelected(Tab tab, FragmentTransaction ft) {
     	Log.d(TAG, "onTabSelected");
     	
-    	int position = tab.getPosition();
-    	this.menuAdapter.setSelectedTabIndex(position);
-    	this.menuAdapter.update();
+//    	int position = tab.getPosition();
+//    	this.menuAdapter.setSelectedTabIndex(position);
+//    	this.menuAdapter.update();
     	
+    	/*
     	if (this.menus != null && position < this.menus.size()) {
     		this.textViewTabName.setText(menus.get(position).getTabName());
-    	}
+    	}*/
     }
 
     @Override
@@ -211,7 +213,7 @@ public class MainActivity
     
     private void setMenus(MenuCollection menus) {
     	this.menus = menus;
-    	this.menuAdapter.setMenus(menus);
+    	//this.menuAdapter.setMenus(menus);
     	
     	ActionBar actionBar = this.getActionBar();
     	
@@ -224,8 +226,8 @@ public class MainActivity
     	
     	if (menus.size() > 0) {
     		// ‚Í‚¶‚ß‚Ìƒ^ƒu‚ð‘I‘ð
-    		this.menuAdapter.setSelectedTabIndex(0);
-    		this.menuAdapter.update();
+    		//this.menuAdapter.setSelectedTabIndex(0);
+    		//this.menuAdapter.update();
     		actionBar.selectTab(actionBar.getTabAt(0));
     	}
     }

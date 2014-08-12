@@ -71,8 +71,12 @@ class MenuTabHelper {
 
 	private View createView(int position) {
 		View view = this.inflater.inflate(this.layoutId, null);
+		/*
 		TextView textViewListName =
 				(TextView)view.findViewById(R.id.textViewListName);
+		*/
+		
+		/*
 		GridView gridViewMenuItems =
 				(GridView)view.findViewById(R.id.gridViewMenuItems);
 		
@@ -86,20 +90,21 @@ class MenuTabHelper {
 		
 		MenuList tab = (MenuList)this.getItem(position);
 		String listName = tab.getListName();
-		
+		*/
+		/*
 		if (StringUtils.isEmpty(listName)) {
 			textViewListName.setVisibility(View.GONE);
 		}
 		
 		else {
 			textViewListName.setText(tab.getListName());
-		}
-		
+		}*/
+		/*
 		adapter.setMenus(menus);
 		adapter.setSelectedTabIndex(this.selectedTabIndex);
 		adapter.setSelectedListIndex(position);
 		adapter.update();
-		
+		*/
 		return view;
 		
 		/*
