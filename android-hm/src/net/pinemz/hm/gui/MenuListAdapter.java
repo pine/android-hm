@@ -57,6 +57,8 @@ public class MenuListAdapter extends BaseAdapter {
      */
 	@Override
 	public int getCount() {
+		Log.d(TAG, "getCount");
+		
 		// タブが取得できるか
 		if (this.menus != null &&
 				this.selectedTabIndex >= 0 &&
@@ -64,13 +66,9 @@ public class MenuListAdapter extends BaseAdapter {
 		{
 			MenuTab tab = this.menus.get(this.selectedTabIndex);
 			
-			if (tab != null &&
-					this.selectedListIndex >= 0 &&
-					this.selectedListIndex < tab.size())
+			if (tab != null)
 			{
-				int count = tab.get(this.selectedListIndex).size();
-				Log.v(TAG, "getCount(count = " + count + ")");
-				return count;
+				return tab.size();
 			}
 		}
 		
@@ -82,7 +80,6 @@ public class MenuListAdapter extends BaseAdapter {
 		if (this.getCount() > 0) {
 			return this.menus
 					.get(this.selectedTabIndex)
-					.get(this.selectedListIndex)
 					.get(position);
 		}
 		
@@ -104,7 +101,7 @@ public class MenuListAdapter extends BaseAdapter {
 			convertView = this.inflater.inflate(this.layoutId, parent, false);
 			
 			holder = new MenuItemViewHolder();
-			holder.textViewMenuName = (TextView)convertView.findViewById(R.id.textViewMenuName);
+//			holder.textViewMenuName = (TextView)convertView.findViewById(R.id.textViewMenuName);
 			holder.imageViewMenu = (ImageView)convertView.findViewById(R.id.imageViewMenu);
 			convertView.setTag(holder);
 		}
@@ -114,17 +111,19 @@ public class MenuListAdapter extends BaseAdapter {
 		}
 
 		MenuItem item = (MenuItem)this.getItem(position);
-		holder.textViewMenuName.setText(item.getMenuName());
+//		holder.textViewMenuName.setText(item.getMenuName());
 		
 		ImageView imageViewMenu = holder.imageViewMenu;
-		
-		ImageListener listener = ImageLoader.getImageListener(
-				holder.imageViewMenu, 0, 0);
-		imageLoader.get(item.getImage().getUrl(), listener);
-		
-		imageViewMenu.setLayoutParams(new LinearLayout.LayoutParams(
-				item.getImage().getWidth(),
-				item.getImage().getHeight()));
+//		imageViewMenu.setTag(item.getImage().getUrl());
+		//if (imageViewMenu.getTag() != item){
+			//imageViewMenu.setTag(item);
+			
+			imageViewMenu.setImageDrawable(null);
+			ImageListener listener = ImageLoader.getImageListener(
+					holder.imageViewMenu, 0, 0);
+			
+			imageLoader.get(item.getImage().getUrl(), listener);
+		//}
 		
 		return convertView;
 	}
@@ -151,20 +150,12 @@ public class MenuListAdapter extends BaseAdapter {
 		this.selectedTabIndex = tabIndex;
 	}
 	
-	public int getSelectedListIndex() {
-		return this.selectedListIndex;
-	}
-	
-	public void setSelectedListIndex(int listIndex) {
-		Log.d(TAG, "setSelectedListIndex");
-		
-		this.selectedListIndex = listIndex;
-	}
-	
 	/**
 	 * データ変更を通知し UI に反映させる
 	 */
 	public void update() {
+		Log.d(TAG, "update()");
+		
 		if (this.menus != null &&
 				this.selectedTabIndex >= 0 &&
 				this.selectedTabIndex >= 0)

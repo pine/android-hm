@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -34,7 +35,8 @@ public class MainActivity
 	private ImageCache cache;
 	
 	private TextView textViewTabName;
-	private MenuTabHelper menuAdapter;
+	private GridView gridViewMenuItems;
+	private MenuListAdapter menuAdapter;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,16 +50,17 @@ public class MainActivity
         // アクションバーのモードをタブに変更する
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         
+        this.textViewTabName = (TextView)this.findViewById(R.id.textViewTabName);
+        this.gridViewMenuItems = (GridView)this.findViewById(R.id.gridViewMenuItems);
+        
         this.cache = new BitmapCache();
-        this.menuAdapter = new MenuTabHelper(
+        this.menuAdapter = new MenuListAdapter(
         		this.getApplicationContext(),
-//        		(ViewGroup)this.findViewById(R.id.linearLayoutMenuLists),
-        		(ViewGroup)this.findViewById(R.id.viewFlipper),
-        		R.layout.item_menu_list,
+        		R.layout.item_menu_item,
         		this.cache
         		);
         
-        this.textViewTabName = (TextView)this.findViewById(R.id.textViewTabName);
+        this.gridViewMenuItems.setAdapter(this.menuAdapter);
         
         // API 関係
     	this.requestQueue = Volley.newRequestQueue(this.getApplicationContext());
