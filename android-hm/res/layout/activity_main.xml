@@ -20,8 +20,8 @@
         android:layout_height="match_parent"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:horizontalSpacing="0dp"
-        android:verticalSpacing="0dp"
+        android:horizontalSpacing="10dp"
+        android:verticalSpacing="10dp"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
         />

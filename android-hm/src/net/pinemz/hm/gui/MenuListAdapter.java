@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -104,6 +105,10 @@ public class MenuListAdapter extends BaseAdapter {
 //			holder.textViewMenuName = (TextView)convertView.findViewById(R.id.textViewMenuName);
 			holder.imageViewMenu = (ImageView)convertView.findViewById(R.id.imageViewMenu);
 			convertView.setTag(holder);
+			
+			if (this.getCount() > 0) {
+				((GridView)parent).setColumnWidth(this.getItemMaxWidth());
+			}
 		}
 		
 		else {
@@ -124,6 +129,10 @@ public class MenuListAdapter extends BaseAdapter {
 			
 			imageLoader.get(item.getImage().getUrl(), listener);
 		//}
+		
+		
+		imageViewMenu.getLayoutParams().height = item.getImage().getHeight();
+		imageViewMenu.getLayoutParams().width = item.getImage().getWidth();
 		
 		return convertView;
 	}
@@ -166,5 +175,16 @@ public class MenuListAdapter extends BaseAdapter {
 		else {
 			this.notifyDataSetInvalidated();
 		}
+	}
+	
+	private int getItemMaxWidth() {
+		int maxWidth = 0;
+		
+		for (int i = 0; i < this.getCount(); ++i) {
+			int width = ((MenuItem)this.getItem(i)).getImage().getWidth();
+			maxWidth = Math.max(maxWidth, width);
+		}
+		
+		return maxWidth;
 	}
 }

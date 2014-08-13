@@ -32,10 +32,11 @@ public class MainActivity
 	private CommonSettings settings;
 	private int prefectureId;
 	private MenuCollection menus;
-	private ImageCache cache;
+	private BitmapCache cache;
 	
 	private TextView textViewTabName;
 	private GridView gridViewMenuItems;
+	private int gridViewMenuItemsFirstPosition;
 	private MenuListAdapter menuAdapter;
 	
     @Override
@@ -53,6 +54,7 @@ public class MainActivity
         this.textViewTabName = (TextView)this.findViewById(R.id.textViewTabName);
         this.gridViewMenuItems = (GridView)this.findViewById(R.id.gridViewMenuItems);
         
+        // 画像キャッシュ
         this.cache = new BitmapCache();
         this.menuAdapter = new MenuListAdapter(
         		this.getApplicationContext(),
@@ -60,7 +62,12 @@ public class MainActivity
         		this.cache
         		);
         
+        // アダプターを設定
         this.gridViewMenuItems.setAdapter(this.menuAdapter);
+        
+        // スクロール開始位置を保存
+        this.gridViewMenuItemsFirstPosition =
+        		this.gridViewMenuItems.getFirstVisiblePosition();
         
         // API 関係
     	this.requestQueue = Volley.newRequestQueue(this.getApplicationContext());
@@ -112,6 +119,10 @@ public class MainActivity
     	
     	this.menuAdapter = null;
     	
+    	// 画像キャッシュをクリア
+    	this.cache.clear();
+    	this.cache = null;
+    	
     	// API 関係を開放
     	this.hmApi = null;
     	this.requestQueue = null;
@@ -151,6 +162,8 @@ public class MainActivity
     	int position = tab.getPosition();
     	this.menuAdapter.setSelectedTabIndex(position);
     	this.menuAdapter.update();
+    	
+    	this.gridViewMenuItems.smoothScrollToPosition(this.gridViewMenuItemsFirstPosition);
     	
     	if (this.menus != null && position < this.menus.size()) {
     		this.textViewTabName.setText(menus.get(position).getTabName());
@@ -229,7 +242,8 @@ public class MainActivity
     		// はじめのタブを選択
     		this.menuAdapter.setSelectedTabIndex(0);
     		this.menuAdapter.update();
-    		actionBar.selectTab(actionBar.getTabAt(0));
+    		
+    		actionBar.getTabAt(0).select();
     	}
     }
 }

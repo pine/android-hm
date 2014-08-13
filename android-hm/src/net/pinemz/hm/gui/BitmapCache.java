@@ -28,4 +28,7 @@ public class BitmapCache implements ImageCache {
         mCache.put(url, bitmap);
     }
  
+    public void clear() {
+    	this.mCache.evictAll();
+    }
 }
