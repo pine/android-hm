@@ -13,9 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -34,7 +34,6 @@ public class MenuListAdapter extends BaseAdapter {
     
     private MenuCollection menus;
     private int selectedTabIndex;
-    private int selectedListIndex;
     
     public MenuListAdapter(
 			Context context,
@@ -57,6 +56,8 @@ public class MenuListAdapter extends BaseAdapter {
      */
 	@Override
 	public int getCount() {
+		Log.d(TAG, "getCount");
+		
 		// タブが取得できるか
 		if (this.menus != null &&
 				this.selectedTabIndex >= 0 &&
@@ -64,13 +65,9 @@ public class MenuListAdapter extends BaseAdapter {
 		{
 			MenuTab tab = this.menus.get(this.selectedTabIndex);
 			
-			if (tab != null &&
-					this.selectedListIndex >= 0 &&
-					this.selectedListIndex < tab.size())
+			if (tab != null)
 			{
-				int count = tab.get(this.selectedListIndex).size();
-				Log.v(TAG, "getCount(count = " + count + ")");
-				return count;
+				return tab.size();
 			}
 		}
 		
@@ -82,7 +79,6 @@ public class MenuListAdapter extends BaseAdapter {
 		if (this.getCount() > 0) {
 			return this.menus
 					.get(this.selectedTabIndex)
-					.get(this.selectedListIndex)
 					.get(position);
 		}
 		
@@ -104,9 +100,13 @@ public class MenuListAdapter extends BaseAdapter {
 			convertView = this.inflater.inflate(this.layoutId, parent, false);
 			
 			holder = new MenuItemViewHolder();
-			holder.textViewMenuName = (TextView)convertView.findViewById(R.id.textViewMenuName);
+//			holder.textViewMenuName = (TextView)convertView.findViewById(R.id.textViewMenuName);
 			holder.imageViewMenu = (ImageView)convertView.findViewById(R.id.imageViewMenu);
 			convertView.setTag(holder);
+			
+			if (this.getCount() > 0) {
+				((GridView)parent).setColumnWidth(this.getItemMaxWidth());
+			}
 		}
 		
 		else {
@@ -114,17 +114,23 @@ public class MenuListAdapter extends BaseAdapter {
 		}
 
 		MenuItem item = (MenuItem)this.getItem(position);
-		holder.textViewMenuName.setText(item.getMenuName());
+//		holder.textViewMenuName.setText(item.getMenuName());
 		
 		ImageView imageViewMenu = holder.imageViewMenu;
+//		imageViewMenu.setTag(item.getImage().getUrl());
+		//if (imageViewMenu.getTag() != item){
+			//imageViewMenu.setTag(item);
+			
+			imageViewMenu.setImageDrawable(null);
+			ImageListener listener = ImageLoader.getImageListener(
+					holder.imageViewMenu, 0, 0);
+			
+			imageLoader.get(item.getImage().getUrl(), listener);
+		//}
 		
-		ImageListener listener = ImageLoader.getImageListener(
-				holder.imageViewMenu, 0, 0);
-		imageLoader.get(item.getImage().getUrl(), listener);
 		
-		imageViewMenu.setLayoutParams(new LinearLayout.LayoutParams(
-				item.getImage().getWidth(),
-				item.getImage().getHeight()));
+		imageViewMenu.getLayoutParams().height = item.getImage().getHeight();
+		imageViewMenu.getLayoutParams().width = item.getImage().getWidth();
 		
 		return convertView;
 	}
@@ -151,20 +157,12 @@ public class MenuListAdapter extends BaseAdapter {
 		this.selectedTabIndex = tabIndex;
 	}
 	
-	public int getSelectedListIndex() {
-		return this.selectedListIndex;
-	}
-	
-	public void setSelectedListIndex(int listIndex) {
-		Log.d(TAG, "setSelectedListIndex");
-		
-		this.selectedListIndex = listIndex;
-	}
-	
 	/**
 	 * データ変更を通知し UI に反映させる
 	 */
 	public void update() {
+		Log.d(TAG, "update()");
+		
 		if (this.menus != null &&
 				this.selectedTabIndex >= 0 &&
 				this.selectedTabIndex >= 0)
@@ -175,5 +173,16 @@ public class MenuListAdapter extends BaseAdapter {
 		else {
 			this.notifyDataSetInvalidated();
 		}
+	}
+	
+	private int getItemMaxWidth() {
+		int maxWidth = 0;
+		
+		for (int i = 0; i < this.getCount(); ++i) {
+			int width = ((MenuItem)this.getItem(i)).getImage().getWidth();
+			maxWidth = Math.max(maxWidth, width);
+		}
+		
+		return maxWidth;
 	}
 }

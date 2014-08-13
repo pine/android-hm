@@ -4,25 +4,37 @@ import net.pinemz.hm.R;
 import net.pinemz.hm.api.HmApi;
 import net.pinemz.hm.api.MenuCollection;
 import net.pinemz.hm.api.MenuTab;
+import net.pinemz.hm.api.MenuItem;
 import net.pinemz.hm.storage.CommonSettings;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.view.ViewGroup;
+import android.view.View;
+import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.AdapterView;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader.ImageCache;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
 
+/**
+ * メインのアクティビティ
+ * @author MIZUNE Pine
+ *
+ */
 public class MainActivity
 	extends BasicActivity
-	implements TabListener
+	implements TabListener, AdapterView.OnItemClickListener
 {
 	public final String TAG = "MainActivity";
 	
@@ -31,10 +43,12 @@ public class MainActivity
 	private CommonSettings settings;
 	private int prefectureId;
 	private MenuCollection menus;
-	private ImageCache cache;
+	private BitmapCache cache;
 	
 	private TextView textViewTabName;
-	private MenuTabHelper menuAdapter;
+	private GridView gridViewMenuItems;
+	private int gridViewMenuItemsFirstPosition;
+	private MenuListAdapter menuAdapter;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,17 +62,27 @@ public class MainActivity
         // アクションバーのモードをタブに変更する
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         
+        this.textViewTabName = (TextView)this.findViewById(R.id.textViewTabName);
+        this.gridViewMenuItems = (GridView)this.findViewById(R.id.gridViewMenuItems);
+        
+        this.gridViewMenuItems.setOnItemClickListener(this);
+        
+        // 画像キャッシュ
         this.cache = new BitmapCache();
-        /*
-        this.menuAdapter = new MenuTabHelper(
+
+        this.menuAdapter = new MenuListAdapter(
         		this.getApplicationContext(),
-//        		(ViewGroup)this.findViewById(R.id.linearLayoutMenuLists),
-        		(ViewGroup)this.findViewById(R.id.viewFlipper),
-        		R.layout.item_menu_list,
+        		R.layout.item_menu_item,
         		this.cache
         		);
-        */
-//        this.textViewTabName = (TextView)this.findViewById(R.id.textViewTabName);
+        this.textViewTabName = (TextView)this.findViewById(R.id.textViewTabName);
+        
+        // アダプターを設定
+        this.gridViewMenuItems.setAdapter(this.menuAdapter);
+        
+        // スクロール開始位置を保存
+        this.gridViewMenuItemsFirstPosition =
+        		this.gridViewMenuItems.getFirstVisiblePosition();
         
         // API 関係
     	this.requestQueue = Volley.newRequestQueue(this.getApplicationContext());
@@ -110,6 +134,10 @@ public class MainActivity
     	
     	this.menuAdapter = null;
     	
+    	// 画像キャッシュをクリア
+    	this.cache.clear();
+    	this.cache = null;
+    	
     	// API 関係を開放
     	this.hmApi = null;
     	this.requestQueue = null;
@@ -125,7 +153,7 @@ public class MainActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
     	Log.d(TAG, "onOptionsItemSelected");
     	
         // Handle action bar item clicks here. The action bar will
@@ -146,24 +174,49 @@ public class MainActivity
     public void onTabSelected(Tab tab, FragmentTransaction ft) {
     	Log.d(TAG, "onTabSelected");
     	
-//    	int position = tab.getPosition();
-//    	this.menuAdapter.setSelectedTabIndex(position);
-//    	this.menuAdapter.update();
+    	int position = tab.getPosition();
+    	this.menuAdapter.setSelectedTabIndex(position);
+    	this.menuAdapter.update();
     	
-    	/*
+    	this.gridViewMenuItems.smoothScrollToPosition(this.gridViewMenuItemsFirstPosition);
+    	
     	if (this.menus != null && position < this.menus.size()) {
     		this.textViewTabName.setText(menus.get(position).getTabName());
-    	}*/
+    	}
     }
 
     @Override
     public void onTabUnselected(Tab tab, FragmentTransaction ft) {
     }
     
+
+    /**
+     * メニューを選択したときの処理
+     */
+	@Override
+	public void onItemClick(
+			AdapterView<?> parent,
+			View view,
+			int position,
+			long id) 
+	{
+		Log.d(TAG, "onItemClick");
+		
+		// 選択されたものを取得
+		MenuItem item = (MenuItem)this.menuAdapter.getItem(position);
+		if (item == null) { return; }
+		
+		// メニューを表示するダイアログを生成
+		Log.d(TAG, "position = " + position + ", name = " + item.getMenuName());
+		Dialog d = this.createMenuItemDialog(item);
+		
+		this.showDialog(d);
+	}
+	
     /**
      * 設定メニューが押されたときの処理
      */
-    public void menuSettingsClicked(MenuItem item) {
+    public void menuSettingsClicked(android.view.MenuItem item) {
     	Log.d(TAG, "menuSettingsClicked");
     	assert item != null;
     	
@@ -173,13 +226,19 @@ public class MainActivity
     /**
      * メニューを読み込む
      */
-    private void loadMenuts(){
+    private void loadMenuts() {
+    	// 既にデータが存在する場合
+    	if (this.menus != null &&
+    			this.menus.getPrefectureId() == this.prefectureId) {
+    		this.setMenus(this.menus);
+    		return;
+    	}
+    	
     	// ローディングダイアログを表示
     	this.showProgressDialog(R.string.loading_msg_menus);
     	
     	// API を用いてメニューを取得
     	this.hmApi.getMenus(this.prefectureId, new HmApi.Listener<MenuCollection>() {
-
 			@Override
 			public void onSuccess(HmApi api, MenuCollection data) {
 				Log.d(TAG, "HmApi.Listener#onSuccess");
@@ -207,10 +266,13 @@ public class MainActivity
 						R.string.network_error_msg_menus
 						);
 			}
-    		
 		});
     }
     
+    /**
+     * ロードしたメニューを反映させる
+     * @param menus メニュー情報
+     */
     private void setMenus(MenuCollection menus) {
     	this.menus = menus;
     	//this.menuAdapter.setMenus(menus);
@@ -220,15 +282,63 @@ public class MainActivity
     	// タブを追加する
     	actionBar.removeAllTabs();
     	
-    	for (MenuTab tab: menus) {
-    		actionBar.addTab(actionBar.newTab().setText(tab.getTabName()).setTabListener(this));
+    	for (int i = 0; i < this.menus.size(); ++i) {
+    		MenuTab menuTab = this.menus.get(i);
+    		Tab appTab = actionBar.newTab()
+    				.setText(menuTab.getTabName())
+    				.setTabListener(this);
+    		
+    		actionBar.addTab(appTab);
     	}
     	
     	if (menus.size() > 0) {
     		// はじめのタブを選択
-    		//this.menuAdapter.setSelectedTabIndex(0);
-    		//this.menuAdapter.update();
-    		actionBar.selectTab(actionBar.getTabAt(0));
+    		this.menuAdapter.setSelectedTabIndex(0);
+    		this.menuAdapter.update();
     	}
     }
+    
+	/**
+	 * メニューを表示するダイアログを生成する
+	 * @param item 表示するメニュー
+	 * @return 生成したダイアログ
+	 */
+	private Dialog createMenuItemDialog(MenuItem item) {
+		LayoutInflater inflater = LayoutInflater.from(this);
+		View dialogView = inflater.inflate(R.layout.menu_dialog, null);
+		
+		// メニュー名
+		TextView menuName =
+				(TextView)dialogView.findViewById(R.id.textViewDialogMenuName);
+		menuName.setText(item.getMenuName());
+		
+		// 金額
+		TextView itemMoney =
+				(TextView)dialogView.findViewById(R.id.textViewMenuItemMoney);
+		itemMoney.setText(Integer.toString(item.getMoney()));
+		
+		// 画像を設定
+		NetworkImageView imageView =
+				(NetworkImageView)dialogView.findViewById(R.id.imageViewItemImage);
+		imageView.setImageUrl(
+				item.getImage().getUrl(),
+				new ImageLoader(this.requestQueue, this.cache)
+				);
+		imageView.getLayoutParams().width = item.getImage().getWidth();
+		imageView.getLayoutParams().height = item.getImage().getHeight();
+		
+		// ダイアログを生成
+		Dialog d = new AlertDialog.Builder(this)
+			.setTitle(R.string.menu_info_title)
+			.setView(dialogView)
+			.setPositiveButton(R.string.close_button, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					MainActivity.this.closeDialog();
+				}
+			})
+			.create();
+	
+		return d;
+	}
 }

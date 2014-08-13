@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	
-    
+    <!-- 全体 -->
     <string name="app_name">ほっともっと</string>
     <string name="hello_world">Hello world!</string>
-    
+    <string name="close_button">閉じる</string>
     
     <!-- BasicActivity -->
     <string name="ok_button">OK</string>
@@ -17,6 +17,8 @@
     <string name="loading_msg_menus">メニューの一覧を読み込んでいます&#8230;</string>
     <string name="network_failed_msg_menus">メニュー一覧の取得に失敗しました。</string>
     <string name="network_error_msg_menus">メニュー一覧を取得する際にエラーが発生しました。</string>
+    <string name="menu_info_title">メニュー詳細</string>
+    <string name="yen">円</string>
     
 	<!-- SettingsActivity -->
 	<string name="setting_title">都道府県の設定</string>

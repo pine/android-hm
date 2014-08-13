@@ -7,6 +7,11 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * “s“¹•{Œ§‚ð•\‚·
+ * @author MIZUNE Pine
+ *
+ */
 public class Prefecture {
 	public static String TAG = "Prefecture";
 	

@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 import com.google.common.collect.ForwardingList;
 
-public class MenuTab extends ForwardingList<MenuList> {
+public class MenuTab extends ForwardingList<MenuItem> {
 	public static final String TAG = "MenuTab";
 	
 	private int prefectureId;
@@ -31,18 +31,27 @@ public class MenuTab extends ForwardingList<MenuList> {
 		
 		// ƒŠƒXƒg‚Ì‰ğÍ
 		JSONArray lists = tabJson.getJSONArray("lists");
-		int length = lists.length();
+		int listLength = lists.length();
 		
-		for (int i = 0; i < length; ++i) {
+		for (int i = 0; i < listLength; ++i) {
 			JSONObject listJson = lists.getJSONObject(i);
-			MenuList list = new MenuList(
-					this.prefectureId,
-					this.prefectureName,
-					this.tabName,
-					listJson
-					);
 			
-			this.add(list);
+			String listName = listJson.getString("listName");
+			JSONArray itemsJson = listJson.getJSONArray("items");
+			int itemsLength = itemsJson.length();
+			
+			for (int j = 0; j < itemsLength; ++j) {
+				JSONObject itemJson = itemsJson.getJSONObject(j);
+				MenuItem item = new MenuItem(
+						this.prefectureId,
+						this.prefectureName,
+						this.tabName,
+						listName,
+						itemJson
+						);
+				
+				this.add(item);
+			}
 		}
 	}
 	
@@ -61,13 +70,13 @@ public class MenuTab extends ForwardingList<MenuList> {
 	/**
 	 * ForwardingList ‚ÌÀ‘•
 	 */
-	private List<MenuList> delegate = new ArrayList<>();
+	private List<MenuItem> delegate = new ArrayList<>();
 	
 	/**
 	 * ForwardingList ‚ÌÀ‘•
 	 */
 	@Override
-	protected List<MenuList> delegate() {
+	protected List<MenuItem> delegate() {
 		return this.delegate;
 	}
 	
