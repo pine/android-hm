@@ -10,8 +10,8 @@ public class ImageData {
 	private int width;
 	private int height;
 	
-	public ImageData(JSONObject imageJson) throws JSONException {
-		
+	public ImageData(JSONObject imageJson) throws JSONException 
+	{
 		this.url = imageJson.getString("url");
 		this.width = imageJson.getInt("width");
 		this.height = imageJson.getInt("height");

@@ -15,8 +15,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -35,7 +34,6 @@ public class MenuListAdapter extends BaseAdapter {
     
     private MenuCollection menus;
     private int selectedTabIndex;
-    private int selectedListIndex;
     
     public MenuListAdapter(
 			Context context,
