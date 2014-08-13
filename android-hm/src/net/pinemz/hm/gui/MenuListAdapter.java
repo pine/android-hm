@@ -114,21 +114,15 @@ public class MenuListAdapter extends BaseAdapter {
 		}
 
 		MenuItem item = (MenuItem)this.getItem(position);
-//		holder.textViewMenuName.setText(item.getMenuName());
-		
+	
 		ImageView imageViewMenu = holder.imageViewMenu;
-//		imageViewMenu.setTag(item.getImage().getUrl());
-		//if (imageViewMenu.getTag() != item){
-			//imageViewMenu.setTag(item);
-			
-			imageViewMenu.setImageDrawable(null);
-			ImageListener listener = ImageLoader.getImageListener(
-					holder.imageViewMenu, 0, 0);
-			
-			imageLoader.get(item.getImage().getUrl(), listener);
-		//}
+
+		imageViewMenu.setImageDrawable(null);
+		ImageListener listener = ImageLoader.getImageListener(
+				holder.imageViewMenu, 0, 0);
 		
-		
+		imageLoader.get(item.getImage().getUrl(), listener);
+			
 		imageViewMenu.getLayoutParams().height = item.getImage().getHeight();
 		imageViewMenu.getLayoutParams().width = item.getImage().getWidth();
 		

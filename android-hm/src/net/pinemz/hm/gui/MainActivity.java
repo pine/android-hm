@@ -275,7 +275,7 @@ public class MainActivity
      */
     private void setMenus(MenuCollection menus) {
     	this.menus = menus;
-    	//this.menuAdapter.setMenus(menus);
+    	this.menuAdapter.setMenus(menus);
     	
     	ActionBar actionBar = this.getActionBar();
     	

@@ -6,13 +6,6 @@
     android:orientation="vertical"
     tools:context="net.pinemz.hm.gui.MainActivity" >
 
-   	<ListView 
-        android:id="@+id/listViewMain"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </ListView>
-    
-    <!-- 
     <TextView
         android:id="@+id/textViewTabName"
         android:layout_width="match_parent"
@@ -32,17 +25,4 @@
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
         />
-        -->
-    <!-- 
-    <GridView
-        android:id="@+id/gridViewMenuItems"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:gravity="center"
-        android:horizontalSpacing="0dp"
-        android:numColumns="auto_fit"
-        android:stretchMode="columnWidth"
-        />
-        -->
 </LinearLayout>
